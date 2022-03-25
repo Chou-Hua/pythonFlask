@@ -66,7 +66,7 @@ def login():
             dbPassword = format((user_Ref.document(account).get()).to_dict()['password'])
             accountVerify = account==dbAccount and password==dbPassword        
             if(accountVerify):
-                return jsonify({"success":"登入成功"}),200
+                return jsonify({"success":True}),200
             return jsonify({"Fail":"帳號或密碼錯誤"}),500                           
                 
     except Exception as e:
