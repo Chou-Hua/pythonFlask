@@ -4,12 +4,8 @@ import imp
 import uuid
 from flask import Blueprint,request,jsonify,Flask
 from firebase_admin import firestore
-#from flask_jwt_extended import(JWTManager,jwt_required,create_access_token)
+from flask_jwt_extended import create_access_token
 
-
-#jwt = JWTManager()
-#app.config['JWT_SECRET_KEY'] = 'ji3g4jwtau4au42k7ul4g6'  
-#jwt.init_app(app)
 
 db = firestore.client()
 user_Ref = db.collection('user')
@@ -41,7 +37,7 @@ def create():
             user_Ref.document(account).set(request.json)
             return jsonify({"success":True}),200
         else:
-            return jsonify({"error":'account is repeat'}),500
+            return jsonify({"error":'此帳號已重複申請'}),400
     except Exception as e:
         return f"An Error Occuered:{e}"
     
@@ -54,20 +50,24 @@ def read():
     except Exception as e:
         return f"An Error Occured:{e}"
     
-@userAPI.route('/login',methods=['GET','POST'])
+@userAPI.route('/login',methods=['POST','GET'])
 def login():
     try:
         if request.method =='POST':        
             account = request.json.get('account',None)
             password = request.json.get('password',None)
             if(not user_Ref.document(account).get().exists):
-                return jsonify({"Fail":"帳號尚未申請過"}),500                        
+                return jsonify({"error":"帳號尚未申請過"}),400                        
             dbAccount = format((user_Ref.document(account).get()).to_dict()['account'])
             dbPassword = format((user_Ref.document(account).get()).to_dict()['password'])
             accountVerify = account==dbAccount and password==dbPassword        
             if(accountVerify):
-                return jsonify({"success":True}),200
-            return jsonify({"Fail":"帳號或密碼錯誤"}),500                           
+                access_token = create_access_token(identity=account)
+                return jsonify({
+                    "success":True,
+                    "access_token":access_token
+                    }),200
+            return jsonify({"error":"帳號或密碼錯誤"}),400                           
                 
     except Exception as e:
         return f"An Error Occured:{e}"
@@ -80,7 +80,7 @@ def changePassword():
         dbAccount = user_Ref.document(account)
         print('dbacount',dbAccount)
         if(not dbAccount.get().exists):
-            return jsonify({"Fail":"帳號尚未申請過"}),500                        
+            return jsonify({"Fail":"帳號尚未申請過"}),400                        
         else:
             # dbAccount.update(password)
             doc = {'password':password}
@@ -95,7 +95,7 @@ def deleteUser():
         account = request.args.get('account')
         dbAccount = user_Ref.document(account)
         if(not dbAccount.get().exists):
-            return jsonify({"Fail":"此帳號不存在"}),500                        
+            return jsonify({"Fail":"此帳號不存在"}),400                        
         else:
             dbAccount.delete()
             return jsonify({"success":'刪除成功'}),200
