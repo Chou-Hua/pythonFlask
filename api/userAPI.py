@@ -1,7 +1,3 @@
-from crypt import methods
-import email
-import imp
-import uuid
 from flask import Blueprint,request,jsonify,Flask
 from firebase_admin import firestore
 from flask_jwt_extended import create_access_token
@@ -9,7 +5,6 @@ from flask_jwt_extended import create_access_token
 
 db = firestore.client()
 user_Ref = db.collection('user')
-print(user_Ref)
 
 
 
