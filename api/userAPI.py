@@ -23,6 +23,10 @@ print('Done')
 
 userAPI = Blueprint('userAPI',__name__)
 
+@userAPI.route('/test',methods=['GET'])
+def testHeroku():
+    return "Test is Success"
+
 @userAPI.route('/add',methods=['POST'])
 def create():
     try:
