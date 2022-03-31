@@ -3,3 +3,6 @@ gunicorn
 flask-jwt-extended
 firestore
 flask-cors
+imp
+re
+firebase_admin
