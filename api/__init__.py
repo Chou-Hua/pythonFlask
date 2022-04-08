@@ -5,8 +5,10 @@ from flask import Flask
 from firebase_admin import credentials,initialize_app
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from getEvn import getPrivateKey
 
-cred = credentials.Certificate("api/pkey.json")
+
+cred = credentials.Certificate(getPrivateKey)
 default_app = initialize_app(cred)
 jwt = JWTManager()
 
