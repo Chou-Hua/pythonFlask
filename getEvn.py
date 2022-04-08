@@ -2,10 +2,10 @@ import os
 import json
 
 def getPrivateKey():
-    with open('api/key.json', 'r') as openfile:    
+    with open('api/pkey.json', 'r') as openfile:    
         json_object = json.load(openfile)
     key = 'private_key'
-    value = os.getenv(key)
+    value = os.getenv(key)    
     id_key = 'private_key_id'
     id_value = os.getenv(id_key)
     keyDict = {key:value,id_key:id_value}
