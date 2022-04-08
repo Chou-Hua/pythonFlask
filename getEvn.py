@@ -12,5 +12,5 @@ def getPrivateKey():
     print(id_value) 
     keyDict = {key:value,id_key:id_value}
     json_object.update(keyDict)
-    covet_json = json.loads(json.dumps(json_object,indent=4))
+    covet_json = json.dumps(json_object,indent=4)
     return covet_json
