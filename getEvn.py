@@ -12,5 +12,5 @@ def getPrivateKey():
     with open('api/pkey.json', 'r') as openfile:    
         json_object = json.load(openfile)
     json_object.update(keyDict)
-    covet_json = json.dumps(json_object,indent=4)
-    return covet_json
+    covet_json = json.dumps(json_object)
+    return json.loads(covet_json)
