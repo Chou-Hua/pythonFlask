@@ -3,7 +3,7 @@ import json
 
 def getPrivateKey():
     key = 'private_key'
-    value = os.getenv(key)   
+    value = os.getenv(key).replace("\\n", "\n")   
     id_key = 'private_key_id'
     id_value = os.getenv(id_key)
     keyDict = {key:value,id_key:id_value}    
