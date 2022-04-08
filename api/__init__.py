@@ -8,8 +8,8 @@ from flask_jwt_extended import JWTManager
 from getEvn import getPrivateKey
 
 
-print(getPrivateKey)
-cred = credentials.Certificate(getPrivateKey)
+key = getPrivateKey()
+cred = credentials.Certificate(key)
 default_app = initialize_app(cred)
 jwt = JWTManager()
 
