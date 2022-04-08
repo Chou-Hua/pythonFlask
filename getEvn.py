@@ -10,7 +10,7 @@ def getPrivateKey():
     print(id_value) 
     keyDict = {key:value,id_key:id_value}    
     with open('api/pkey.json', 'r') as openfile:    
-        json_object = json.load(openfile)
+        json_object = json.loads(openfile)
     json_object.update(keyDict)
     covet_json = json.dumps(json_object)
     return json.loads(covet_json)
