@@ -31,12 +31,19 @@ def testHeroku():
 def create():
     try:
         account = request.json.get('account')
+        email = request.json.get('email')
+        getEmail = user_Ref.document(email).get()
         getAccount = user_Ref.document(account).get()
         if(not getAccount.exists):   
             user_Ref.document(account).set(request.json)
             return jsonify({"success":True}),200
         else:
-            return jsonify({"error":'此帳號已重複申請'}),400
+            return jsonify({"error":'此帳號已被使用'}),400
+        if(not getEmail.exists):
+            user_Ref.document(email).set(request.json)
+            return jsonify({"success":True}),200
+        else:
+            return jsonify({"error":'此信箱已被使用'}),400
     except Exception as e:
         return f"An Error Occuered:{e}"
     
