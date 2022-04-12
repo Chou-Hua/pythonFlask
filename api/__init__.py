@@ -10,6 +10,7 @@ from getEvn import getPrivateKey
 
 key = getPrivateKey()
 cred = credentials.Certificate((key))
+#cred = credentials.Certificate(('api/key.json'))
 default_app = initialize_app(cred)
 jwt = JWTManager()
 
