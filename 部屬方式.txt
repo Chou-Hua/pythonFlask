@@ -1,0 +1,6 @@
+commit、push之後
+輸入 git push heroku master
+若需要輸入帳密 
+
+帳號:信箱
+密碼:heroku設定內的API密鑰
