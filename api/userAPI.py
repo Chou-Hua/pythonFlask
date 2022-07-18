@@ -13,10 +13,14 @@ def testHeroku():
     return "<h1>TEST is Success</h1>"
 
 @userAPI.route('/add',methods=['POST'])
+#TODO 需加入檢測是否有傳入account or email
+#否則會因為傳入非相關key而導致新增成功一筆髒資料
 def create():
     try:
         account = request.json.get('account')
-        email = request.json.get('email')
+        email = request.json.get('email')    
+        if(account==None or email==None):
+            return jsonify({"error":'格式錯誤'}),400            
         getEmail = user_Ref.document(email).get()
         getAccount = user_Ref.document(account).get()
         if(not getAccount.exists):   

@@ -21,8 +21,10 @@ def create_app():
     jwt.init_app(app)
 
     from .userAPI import userAPI
+    from .messageAPI import messageApi
     
     
     #註冊api名字 xxx/user
     app.register_blueprint(userAPI,url_prefix='/user')
+    app.register_blueprint(messageApi,url_prefix='/message')
     return app
