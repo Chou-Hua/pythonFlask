@@ -138,7 +138,7 @@ def editArticle():
 #刪除文章
 @messageApi.route('/deleteArticle',methods=['GET','DELETE'])
 def deleteArticle():
-    checkKey = ['commentID','messageID']
+    checkKey = ['messageID']
     jsonDataList = (list((request.json).keys()))
     if(sorted(checkKey)!=sorted(jsonDataList)):
         return jsonify({"error":'格式錯誤'}),400
