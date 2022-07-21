@@ -136,7 +136,7 @@ def editArticle():
             return f"An Error Occured:{e}"   
 
 #刪除文章
-@messageApi.route('/deleteArticle',methods=['GET','DELETE'])
+@messageApi.route('/deleteArticle',methods=['DELETE'])
 def deleteArticle():
     try:
         message_ID = request.args.get('id')
@@ -150,7 +150,7 @@ def deleteArticle():
         return f"An Error Occured:{e}"            
 
 #刪除留言
-@messageApi.route('/deleteComment',methods=['POST','DELETE'])
+@messageApi.route('/deleteComment',methods=['DELETE'])
 def deleteComment():
     try:
         message_ID = request.json.get('messageID')
