@@ -1,4 +1,5 @@
 from re import M
+from tabnanny import check
 from flask import Blueprint,request,jsonify,Flask
 from firebase_admin import firestore
 from flask_jwt_extended import create_access_token
@@ -30,7 +31,7 @@ def add():
         return jsonify(jsonData),200
     except Exception as e:
         return f"An Error Occuered:{e}"
-#取得所有留言        
+#取得所有文章       
 @messageApi.route('/',methods=['GET'])
 def read():
         try:
@@ -70,7 +71,7 @@ def addComment():
         except Exception as e:
             return f"An Error Occured:{e}"    
 #編輯留言
-@messageApi.route('/editcomment',methods=['POST','PUT'])
+@messageApi.route('/editComment',methods=['POST','PUT'])
 def editComment():
     checkKey = ['name','message','messageID','commentID']
     jsonDataList = (list((request.json).keys()))
@@ -107,3 +108,72 @@ def editComment():
                 return jsonify({"success":'編輯成功'}),200                         
         except Exception as e:
             return f"An Error Occured:{e}"    
+
+#編輯文章
+@messageApi.route('/editArticle',methods=['POST','PUT'])
+def editArticle():
+    
+    checkKey = ['message','messageID']
+    jsonDataList = (list((request.json).keys()))
+    if(sorted(checkKey)!=sorted(jsonDataList)):
+        return jsonify({"error":'格式錯誤'}),400
+    else:    
+        try:
+            message_ID = request.json.get('messageID')     
+            message = request.json.get('message',None)                                         
+            #因不知道如何在一個已經有的資料下內添加無該欄位資訊的資料，因此作法是將所有資料拉出來，然後再將資料塞入原始資料內，
+            #在整個覆蓋。
+            if(not message_Ref.document(message_ID).get().exists):
+                return jsonify({"error":'無該筆資料ID'}),400
+            dbMessageStr = format((message_Ref.document(message_ID).get()).to_dict()).replace('\'',"\"")
+            dbMessageJson = json.loads(dbMessageStr)                                                                            
+            dbMessageJson['message'] = message;
+            if(message == '' or message== None):
+                return jsonify({"error":'留言不能為空'}),400
+            else:                
+                message_Ref.document(message_ID).set(dbMessageJson,merge=True)
+                return jsonify({"success":'編輯成功'}),200                         
+        except Exception as e:
+            return f"An Error Occured:{e}"   
+
+#刪除文章
+@messageApi.route('/deleteArticle',methods=['GET','DELETE'])
+def deleteArticle():
+    checkKey = ['commentID','messageID']
+    jsonDataList = (list((request.json).keys()))
+    if(sorted(checkKey)!=sorted(jsonDataList)):
+        return jsonify({"error":'格式錯誤'}),400
+    try:
+        message_ID = request.args.get('id')
+        dbMessage = message_Ref.document(message_ID)
+        if(not dbMessage.get().exists):
+            return jsonify({"error":"此訊息不存在"}),400                        
+        else:
+            dbMessage.delete()
+            return jsonify({"success":'刪除成功'}),200               
+    except Exception as e:
+        return f"An Error Occured:{e}"            
+
+#刪除留言
+@messageApi.route('/deleteComment',methods=['POST','DELETE'])
+def deleteComment():
+    try:
+        message_ID = request.json.get('messageID')
+        comment_ID = request.json.get('commentID')
+        dbMessage = message_Ref.document(message_ID)
+        if(not message_Ref.document(message_ID).get().exists):
+            return jsonify({"error":'無該筆文章ID'}),400                    
+        else:
+            dbMessageStr = format((message_Ref.document(message_ID).get()).to_dict()).replace('\'',"\"")
+            dbMessageJson = json.loads(dbMessageStr)
+            dbcomment = dbMessageJson['comment']                           
+            commentIndex = next((index for (index,d) in enumerate(dbcomment) if d['id']==comment_ID),None)
+            if(commentIndex==None):
+                return jsonify({"error":'無該筆留言ID'}),400         
+            else:            
+                del dbMessageJson['comment'][commentIndex]; 
+                print(dbMessageJson);
+                message_Ref.document(message_ID).set(dbMessageJson,merge=True)                               
+                return jsonify({"success":'刪除成功'}),200                         
+    except Exception as e:
+        return f"An Error Occured:{e}"               
